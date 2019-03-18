@@ -1,4 +1,4 @@
-# electron-forge-publisher-google-storage"
+# electron-forge-publisher-google-storage
 
 Google Cloud Storage publisher for Electron Forge.
 
