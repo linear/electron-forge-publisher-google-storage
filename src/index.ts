@@ -45,10 +45,10 @@ export default async ({
   // Upload artifacts - Manifest only supports one for now
   await Promise.all(
     artifacts.map(async artifact => {
-      const destination = `${platform}/${version}/${path.basename(artifact)}`;
+      const destination = `${platform}/${path.basename(artifact)}`;
       const [uploadedFile, res] = await bucket.upload(artifact, {
         gzip: true,
-        destination: `${platform}/${version}/${path.basename(artifact)}`,
+        destination,
         metadata: {
           "cache-control": "public, max-age=31536000" // 1 year
         }

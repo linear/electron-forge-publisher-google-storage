@@ -2,7 +2,7 @@
 
 Google Cloud Storage publisher for Electron Forge.
 
-The publisher will upload the newly compiled application to `<bucket>/<platform>/<version>` path. It will also upload a manifest JSON file with the latest version number and path to the downloadable file under the platform path for easier auto-update logic.
+The publisher will upload the newly compiled application to `<bucket>/<platform>/<application>` path. It will also upload a manifest JSON file with the latest version number and path to the downloadable file under the platform path for easier auto-update logic.
 
 **IMPORTANT:** This has only been tested with `electron-forge` v5 as v6 is still in beta and not released to `npm`.
 
