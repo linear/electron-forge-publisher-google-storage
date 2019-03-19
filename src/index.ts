@@ -3,24 +3,29 @@ import * as path from "path";
 import * as fs from "fs";
 import { file } from "tmp-promise";
 
+export interface PublisherConfig {
+  /** Google Cloud project ID */
+  projectId?: string;
+  /** Google Cloud storage bucket */
+  bucket: string;
+  /** Alternative download URL if using CNAME over Cloud Storage domain. */
+  storageUrl?: string;
+  /** Make uploaded artifacts and manifest public (default: false) */
+  public?: boolean;
+}
+
 export default async ({
   artifacts,
   forgeConfig,
   platform,
-  arch,
-  packageJSON,
-  ...restConfig
+  packageJSON
 }: {
   artifacts: string[];
   packageJSON: {
     version: string;
   };
   forgeConfig: {
-    googleCloudStorage?: {
-      projectId?: string;
-      bucket: string;
-      public?: boolean;
-    };
+    googleCloudStorage?: PublisherConfig;
   };
   platform: string;
   arch: string;
@@ -34,26 +39,25 @@ export default async ({
     throw 'In order to publish to Google Cloud Storage you must set the "googleCloudStorage.bucket" property in your forge config. See the docs for more info'; // eslint-disable-line
   }
   const bucket = storage.bucket(config.bucket);
-  const platformPath = `${platform}-${arch}`;
   const version = packageJSON.version;
   let downloadPath = "";
 
   // Upload artifacts - Manifest only supports one for now
   await Promise.all(
     artifacts.map(async artifact => {
-      const destination = `${platformPath}/${version}/${path.basename(
-        artifact
-      )}`;
+      const destination = `${platform}/${version}/${path.basename(artifact)}`;
       const [uploadedFile, res] = await bucket.upload(artifact, {
         gzip: true,
-        destination: `${platformPath}/${version}/${path.basename(artifact)}`,
+        destination: `${platform}/${version}/${path.basename(artifact)}`,
         metadata: {
           "cache-control": "public, max-age=31536000" // 1 year
         }
       });
-      downloadPath = `https://storage.googleapis.com/${
-        bucket.name
-      }/${destination}`;
+
+      const storageUrl =
+        config.storageUrl || `https://storage.googleapis.com/${bucket.name}`;
+      downloadPath = `${storageUrl}/${destination}`;
+
       if (config.public) {
         await uploadedFile.makePublic();
       }
@@ -62,14 +66,15 @@ export default async ({
 
   // Upload manifest file
   const manifestContent = JSON.stringify({
-    latestVersion: version,
-    file: downloadPath
+    version: version,
+    url: downloadPath,
+    publishedAt: new Date().toISOString()
   });
   const tmpFile = await file();
   fs.writeFileSync(tmpFile.path, manifestContent);
   const [uploadedManifest, res] = await bucket.upload(tmpFile.path, {
     gzip: true,
-    destination: `${platformPath}/manifest.json`,
+    destination: `${platform}/manifest.json`,
     contentType: "application/json",
     metadata: {
       "cache-control": "public, max-age=60" // 1 minute

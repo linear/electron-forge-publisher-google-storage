@@ -13,11 +13,15 @@ Example config:
 ```js
 "forge": {
   "googleCloudStorage": {
+    "projectId": "project-1",
     "bucket": "download.domain.com",
+    "storageUrl": "https://download.domain.com"
     "public": true
   }
 }
 ```
+
+`storageUrl` is optional and meant to be used with CNAME'd Google Cloud Storage buckets.
 
 ## License
 
