@@ -190,6 +190,11 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@electron-forge/publisher-base@6.0.0-beta.39":
+  version "6.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@electron-forge/publisher-base/-/publisher-base-6.0.0-beta.39.tgz#1896cfa7ec5e9f973afa96d4ee74d6d4de7c7f97"
+  integrity sha512-oHMbyW13KqBQCF2zUto6Za8YBjApzNdDxBsE7h4wj5mPbHE+lNt7mG2uxRuuTOr6jC1c17WUz6/C+D5llZWBAw==
+
 "@google-cloud/common@^0.31.0":
   version "0.31.1"
   resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-0.31.1.tgz#ab8da218b0a435c396807d1fb6fe7a7854ce9a1f"

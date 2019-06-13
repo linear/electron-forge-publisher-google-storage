@@ -1,16 +1,17 @@
 {
   "name": "electron-forge-publish-google-storage",
   "description": "Electron Forge publisher for Google Cloud Storage",
-  "version": "1.2.0",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
+  "version": "2.0.0",
+  "main": "dist/PublisherGoogleStorage.js",
+  "module": "dist/PublisherGoogleStorage.mjs",
+  "source": "src/PublisherGoogleStorage.ts",
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch",
     "prepublish": "yarn build"
   },
   "dependencies": {
+    "@electron-forge/publisher-base": "6.0.0-beta.39",
     "@google-cloud/storage": "2.4.3",
     "tmp-promise": "^1.0.5"
   },
