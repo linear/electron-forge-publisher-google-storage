@@ -62,7 +62,7 @@ export default class PublisherGoogleStorage {
     }
     const bucket = storage.bucket(config.bucket);
     const version = makeResults[0].packageJSON.version;
-    const platform = makeResults[0].packageJSON.version;
+    const platform = makeResults[0].packageJSON.platform;
     let downloadPath = "";
 
     // Upload artifacts - Manifest only supports one for now
@@ -71,7 +71,7 @@ export default class PublisherGoogleStorage {
         const destination = `${artifact.platform}/${path.basename(
           artifact.path
         )}`;
-        const [uploadedFile, res] = await bucket.upload(artifact.path, {
+        await bucket.upload(artifact.path, {
           gzip: true,
           destination,
           metadata: {
@@ -94,7 +94,7 @@ export default class PublisherGoogleStorage {
     });
     const tmpFile = await file();
     fs.writeFileSync(tmpFile.path, manifestContent);
-    const [uploadedManifest, res] = await bucket.upload(tmpFile.path, {
+    await bucket.upload(tmpFile.path, {
       gzip: true,
       destination: `${platform}/manifest.json`,
       contentType: "application/json",

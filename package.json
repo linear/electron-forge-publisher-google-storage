@@ -1,7 +1,7 @@
 {
   "name": "electron-forge-publish-google-storage",
   "description": "Electron Forge publisher for Google Cloud Storage",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "dist/PublisherGoogleStorage.js",
   "module": "dist/PublisherGoogleStorage.mjs",
   "source": "src/PublisherGoogleStorage.ts",
