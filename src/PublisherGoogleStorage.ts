@@ -62,7 +62,6 @@ export default class PublisherGoogleStorage {
     }
     const bucket = storage.bucket(config.bucket);
     const version = makeResults[0].packageJSON.version;
-    const platform = makeResults[0].packageJSON.platform;
     let downloadPath = "";
 
     // Upload artifacts - Manifest only supports one for now
@@ -83,27 +82,27 @@ export default class PublisherGoogleStorage {
         const storageUrl =
           config.storageUrl || `https://storage.googleapis.com/${bucket.name}`;
         downloadPath = `${storageUrl}/${destination}`;
+
+        // Upload manifest file
+        const manifestContent = JSON.stringify({
+          version: version,
+          url: downloadPath,
+          publishedAt: new Date().toISOString()
+        });
+        const tmpFile = await file();
+        fs.writeFileSync(tmpFile.path, manifestContent);
+        await bucket.upload(tmpFile.path, {
+          gzip: true,
+          destination: `${artifact.platform}/manifest.json`,
+          contentType: "application/json",
+          metadata: {
+            "cache-control": "public, max-age=60" // 1 minute
+          },
+          public: config.public
+        });
+
+        tmpFile.cleanup();
       })
     );
-
-    // Upload manifest file
-    const manifestContent = JSON.stringify({
-      version: version,
-      url: downloadPath,
-      publishedAt: new Date().toISOString()
-    });
-    const tmpFile = await file();
-    fs.writeFileSync(tmpFile.path, manifestContent);
-    await bucket.upload(tmpFile.path, {
-      gzip: true,
-      destination: `${platform}/manifest.json`,
-      contentType: "application/json",
-      metadata: {
-        "cache-control": "public, max-age=60" // 1 minute
-      },
-      public: config.public
-    });
-
-    tmpFile.cleanup();
   }
 }
