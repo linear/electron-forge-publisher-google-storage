@@ -15,6 +15,8 @@ export interface PublisherConfig {
   storageUrl?: string;
   /** Make uploaded artifacts and manifest public (default: false) */
   public?: boolean;
+  /** Enable or disable resumable uploads. (default: true) */
+  resumable?: boolean;
 }
 
 export default class PublisherGoogleStorage {
@@ -63,6 +65,7 @@ export default class PublisherGoogleStorage {
     const bucket = storage.bucket(config.bucket);
     const version = makeResults[0].packageJSON.version;
     let downloadPath = "";
+    const resumable = config.resumable ?? true;
 
     // Upload artifacts - Manifest only supports one for now
     await Promise.all(
@@ -73,6 +76,7 @@ export default class PublisherGoogleStorage {
         await bucket.upload(artifact.path, {
           gzip: true,
           destination,
+          resumable,
           metadata: {
             "cache-control": "public, max-age=31536000" // 1 year
           },
@@ -95,6 +99,7 @@ export default class PublisherGoogleStorage {
           gzip: true,
           destination: `${artifact.platform}/manifest.json`,
           contentType: "application/json",
+          resumable,
           metadata: {
             "cache-control": "public, max-age=60" // 1 minute
           },
